@@ -228,6 +228,13 @@ class DeviceController extends Controller
 
         $commands = $this->commandService->getPendingCommands($device->id);
 
+        // Decode command_data from string to array (since DB::select returns it as string)
+        foreach ($commands as $cmd) {
+            if (isset($cmd->command_data) && is_string($cmd->command_data)) {
+                $cmd->command_data = json_decode($cmd->command_data, true);
+            }
+        }
+
         return $this->success([
             'commands' => $commands,
             'count' => count($commands),

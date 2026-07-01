@@ -18,19 +18,10 @@ class FirebaseMessagingService
             ->post("https://fcm.googleapis.com/v1/projects/{$projectId}/messages:send", [
                 'message' => [
                     'token' => $token,
-                    'notification' => [
-                        'title' => $data['title'] ?? 'Family Guard',
-                        'body' => $data['message'] ?? 'أمر جديد من ولي الأمر',
-                    ],
                     'data' => $this->stringifyData($data),
                     'android' => [
                         'priority' => 'high',
                         'ttl' => '300s',
-                        'notification' => [
-                            'channel_id' => 'family_guard_channel',
-                            'sound' => 'default',
-                            'default_sound' => true,
-                        ],
                     ],
                 ],
             ]);

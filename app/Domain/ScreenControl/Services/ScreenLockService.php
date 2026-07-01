@@ -6,6 +6,7 @@ use App\Domain\Device\Models\Device;
 use App\Domain\Device\Models\RemoteCommand;
 use App\Domain\Device\Models\ScreenLock;
 use App\Events\CommandSent;
+use App\Jobs\SendCommandViaFcm;
 use Illuminate\Support\Str;
 
 class ScreenLockService
@@ -157,6 +158,8 @@ class ScreenLockService
 
             broadcast(new CommandSent($command));
             $command->markAsSent();
+            
+            SendCommandViaFcm::dispatch($device, $command);
         } catch (\Exception) {
             // لا توقف العملية بسبب فشل البث
         }
@@ -179,6 +182,8 @@ class ScreenLockService
 
             broadcast(new CommandSent($command));
             $command->markAsSent();
+            
+            SendCommandViaFcm::dispatch($device, $command);
         } catch (\Exception) {
             //
         }

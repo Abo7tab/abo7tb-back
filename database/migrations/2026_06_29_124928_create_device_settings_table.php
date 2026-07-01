@@ -1,0 +1,32 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('device_settings', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('device_id');
+            $table->string('setting_key', 100);
+            $table->text('setting_value')->nullable();
+            $table->timestamp('updated_at')->useCurrentOnUpdate()->useCurrent();
+
+            $table->unique(['device_id', 'setting_key'], 'uq_device_setting');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('device_settings');
+    }
+};

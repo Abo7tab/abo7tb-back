@@ -1,0 +1,333 @@
+{
+  "info": {
+    "name": "Parental Control API — v1",
+    "description": "95 API Routes | Laravel 12 + DDD | Production: https://abo7tb.alwaysdata.net/api/v1",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [{"key": "token", "value": "{{token}}", "type": "string"}]
+  },
+  "variable": [
+    {"key": "base_url", "value": "http://localhost:8000/api/v1"},
+    {"key": "prod_url", "value": "https://abo7tb.alwaysdata.net/api/v1"},
+    {"key": "token",      "value": ""},
+    {"key": "device_uuid","value": ""}
+  ],
+  "item": [
+    {
+      "name": "🔐 Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/auth/register",
+            "header": [{"key": "Content-Type","value": "application/json"}],
+            "body": {"mode": "raw","raw": "{\"name\":\"محمد أحمد\",\"email\":\"test@test.com\",\"password\":\"password123\",\"password_confirmation\":\"password123\",\"phone\":\"01000000000\"}"}
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/auth/login",
+            "header": [{"key": "Content-Type","value": "application/json"}],
+            "body": {"mode": "raw","raw": "{\"email\":\"test@test.com\",\"password\":\"password123\"}"}
+          }
+        },
+        {"name": "Me",      "request": {"method": "GET",  "url": "{{base_url}}/auth/me"}},
+        {"name": "Refresh", "request": {"method": "POST", "url": "{{base_url}}/auth/refresh"}},
+        {"name": "Logout",  "request": {"method": "POST", "url": "{{base_url}}/auth/logout"}}
+      ]
+    },
+    {
+      "name": "📱 Devices",
+      "item": [
+        {"name": "List Devices",   "request": {"method": "GET",  "url": "{{base_url}}/devices"}},
+        {"name": "Get Device",     "request": {"method": "GET",  "url": "{{base_url}}/devices/{{device_uuid}}"}},
+        {
+          "name": "Register Device",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/devices/register",
+            "body": {"mode": "raw","raw": "{\"child_name\":\"أحمد\",\"child_age\":12,\"device_name\":\"هاتف أحمد\",\"device_id\":\"DEVICE001\",\"device_model\":\"Samsung A52\",\"device_brand\":\"Samsung\",\"android_version\":\"13\",\"app_version\":\"1.0.0\"}"}
+          }
+        },
+        {
+          "name": "Update Device Status",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/devices/{{device_uuid}}/heartbeat",
+            "body": {"mode": "raw","raw": "{\"battery_level\":85,\"is_charging\":false,\"is_screen_on\":true,\"current_wifi\":\"Home WiFi\",\"app_version\":\"1.0.0\"}"}
+          }
+        },
+        {"name": "Delete Device", "request": {"method": "DELETE","url": "{{base_url}}/devices/{{device_uuid}}"}},
+        {
+          "name": "Accept Consent",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/devices/{{device_uuid}}/consent/accept",
+            "body": {"mode": "raw","raw": "{\"permissions\":{\"camera\":true,\"microphone\":true,\"gallery\":true,\"location\":true,\"call_monitoring\":true,\"sms_monitoring\":true,\"app_monitoring\":true,\"web_monitoring\":true,\"screen_lock\":true,\"contacts_sync\":true}}"}
+          }
+        },
+        {"name": "Get Consent",    "request": {"method": "GET",  "url": "{{base_url}}/devices/{{device_uuid}}/consent"}},
+        {"name": "Revoke Consent", "request": {"method": "POST", "url": "{{base_url}}/devices/{{device_uuid}}/consent/revoke","body": {"mode": "raw","raw": "{\"reason\":\"طلب الطفل إلغاء الموافقة\"}"}}},
+        {"name": "Get Commands",   "request": {"method": "GET",  "url": "{{base_url}}/devices/{{device_uuid}}/commands/pending"}},
+        {"name": "ACK Command",    "request": {"method": "POST", "url": "{{base_url}}/devices/{{device_uuid}}/commands/1/ack","body": {"mode": "raw","raw": "{\"status\":\"completed\",\"result\":{}}"}}},
+        {"name": "Get Locations",  "request": {"method": "GET",  "url": "{{base_url}}/devices/{{device_uuid}}/locations"}},
+        {
+          "name": "Report Location",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/devices/{{device_uuid}}/location",
+            "body": {"mode": "raw","raw": "{\"latitude\":30.0444,\"longitude\":31.2357,\"accuracy\":10.5,\"speed\":0,\"altitude\":50,\"provider\":\"gps\"}"}
+          }
+        }
+      ]
+    },
+    {
+      "name": "📊 Dashboard",
+      "item": [
+        {"name": "Summary",       "request": {"method": "GET","url": "{{base_url}}/dashboard/summary"}},
+        {"name": "Screen Time",   "request": {"method": "GET","url": "{{base_url}}/dashboard/screen-time?days=7"}},
+        {"name": "Top Apps",      "request": {"method": "GET","url": "{{base_url}}/dashboard/top-apps?days=7&limit=10"}},
+        {"name": "Weekly Report", "request": {"method": "GET","url": "{{base_url}}/dashboard/weekly-report"}},
+        {"name": "Clear Cache",   "request": {"method": "DELETE","url": "{{base_url}}/dashboard/cache"}}
+      ]
+    },
+    {
+      "name": "🔒 Screen Control",
+      "item": [
+        {
+          "name": "Lock Screen — Black",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/devices/{{device_uuid}}/screen/lock",
+            "body": {"mode": "raw","raw": "{\"lock_type\":\"black_screen\",\"allow_emergency_calls\":true,\"allow_alarm\":true}"}
+          }
+        },
+        {
+          "name": "Lock Screen — Bedtime",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/devices/{{device_uuid}}/screen/lock",
+            "body": {"mode": "raw","raw": "{\"lock_type\":\"bedtime\",\"show_message\":true,\"message_title\":\"وقت النوم!\",\"message_body\":\"حان وقت النوم يا حبيبي 🌙\",\"duration_minutes\":480,\"allow_emergency_calls\":true}"}
+          }
+        },
+        {"name": "Unlock Screen",    "request": {"method": "POST","url": "{{base_url}}/devices/{{device_uuid}}/screen/unlock"}},
+        {"name": "Screen Status",    "request": {"method": "GET", "url": "{{base_url}}/devices/{{device_uuid}}/screen/status"}},
+        {"name": "Screen History",   "request": {"method": "GET", "url": "{{base_url}}/devices/{{device_uuid}}/screen/history"}},
+        {
+          "name": "Set Bedtime Schedule",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/devices/{{device_uuid}}/screen/bedtime",
+            "body": {"mode": "raw","raw": "{\"start_time\":\"22:00\",\"end_time\":\"07:00\",\"active_days\":[0,1,2,3,4],\"allow_emergency_calls\":true,\"allow_alarm\":true}"}
+          }
+        },
+        {"name": "Cancel Bedtime", "request": {"method": "DELETE","url": "{{base_url}}/devices/{{device_uuid}}/screen/bedtime"}}
+      ]
+    },
+    {
+      "name": "⏰ Time Management",
+      "item": [
+        {"name": "Get Limits",  "request": {"method": "GET","url": "{{base_url}}/devices/{{device_uuid}}/time-limits"}},
+        {
+          "name": "Add Daily Limit",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/devices/{{device_uuid}}/time-limits",
+            "body": {"mode": "raw","raw": "{\"limit_type\":\"daily_total\",\"limit_name\":\"الحد اليومي\",\"max_minutes_per_day\":120}"}
+          }
+        },
+        {
+          "name": "Add App Limit",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/devices/{{device_uuid}}/time-limits",
+            "body": {"mode": "raw","raw": "{\"limit_type\":\"app_specific\",\"package_name\":\"com.facebook.katana\",\"limit_name\":\"حد فيسبوك\",\"max_app_minutes\":30}"}
+          }
+        },
+        {"name": "Update Limit", "request": {"method": "PUT",   "url": "{{base_url}}/time-limits/1","body": {"mode": "raw","raw": "{\"max_minutes_per_day\":90,\"is_active\":true}"}}},
+        {"name": "Delete Limit", "request": {"method": "DELETE","url": "{{base_url}}/time-limits/1"}},
+        {"name": "Check Limits Now", "request": {"method": "GET","url": "{{base_url}}/devices/{{device_uuid}}/time-limits/check"}},
+        {"name": "Check App Limit",  "request": {"method": "GET","url": "{{base_url}}/devices/{{device_uuid}}/time-limits/app/com.facebook.katana"}}
+      ]
+    },
+    {
+      "name": "📸 Camera",
+      "item": [
+        {
+          "name": "Take Photo",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/devices/{{device_uuid}}/camera/photo",
+            "body": {"mode": "raw","raw": "{\"camera\":\"front\",\"quality\":\"high\",\"flash\":false}"}
+          }
+        },
+        {
+          "name": "Record Video",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/devices/{{device_uuid}}/camera/video",
+            "body": {"mode": "raw","raw": "{\"camera\":\"back\",\"duration\":30,\"quality\":\"hd\"}"}
+          }
+        },
+        {"name": "Get Photos",       "request": {"method": "GET","url": "{{base_url}}/devices/{{device_uuid}}/camera/photos"}},
+        {"name": "Get Videos",       "request": {"method": "GET","url": "{{base_url}}/devices/{{device_uuid}}/camera/videos"}},
+        {"name": "Delete Capture",   "request": {"method": "DELETE","url": "{{base_url}}/camera/captures/{{uuid}}"}},
+        {
+          "name": "Upload Capture (Device)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/devices/{{device_uuid}}/camera/upload",
+            "body": {"mode": "formdata","formdata": [{"key":"file","type":"file"},{"key":"capture_type","value":"photo"},{"key":"camera_side","value":"front"}]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "🎤 Audio",
+      "item": [
+        {"name": "Start Recording",  "request": {"method": "POST","url": "{{base_url}}/devices/{{device_uuid}}/audio/record","body": {"mode": "raw","raw": "{\"duration\":60,\"quality\":\"high\"}"}}},
+        {"name": "Get Recordings",   "request": {"method": "GET", "url": "{{base_url}}/devices/{{device_uuid}}/audio/recordings"}},
+        {"name": "Delete Recording", "request": {"method": "DELETE","url": "{{base_url}}/audio/recordings/{{uuid}}"}},
+        {
+          "name": "Upload Recording (Device)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/devices/{{device_uuid}}/audio/upload",
+            "body": {"mode": "formdata","formdata": [{"key":"file","type":"file"},{"key":"duration","value":"60"}]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "🖼️ Gallery",
+      "item": [
+        {
+          "name": "Sync Gallery (Device)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/devices/{{device_uuid}}/gallery/sync",
+            "body": {"mode": "raw","raw": "{\"items\":[{\"file_path\":\"/DCIM/photo.jpg\",\"file_name\":\"photo.jpg\",\"file_type\":\"image\",\"mime_type\":\"image/jpeg\",\"file_size\":2048000,\"taken_at\":\"2025-01-01 10:00:00\"}]}"}
+          }
+        },
+        {"name": "Get Gallery",      "request": {"method": "GET","url": "{{base_url}}/devices/{{device_uuid}}/gallery"}},
+        {"name": "Delete Gallery Item","request": {"method": "DELETE","url": "{{base_url}}/gallery/items/{{uuid}}"}}
+      ]
+    },
+    {
+      "name": "📸 Screenshots",
+      "item": [
+        {"name": "Take Screenshot",  "request": {"method": "POST","url": "{{base_url}}/devices/{{device_uuid}}/screenshots/take"}},
+        {"name": "Get Screenshots",  "request": {"method": "GET", "url": "{{base_url}}/devices/{{device_uuid}}/screenshots"}},
+        {"name": "Delete Screenshot","request": {"method": "DELETE","url": "{{base_url}}/screenshots/{{uuid}}"}}
+      ]
+    },
+    {
+      "name": "🌐 Web Filtering",
+      "item": [
+        {
+          "name": "Sync Browsing History (Device)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/devices/{{device_uuid}}/browsing/sync",
+            "body": {"mode": "raw","raw": "{\"history\":[{\"url\":\"https://google.com\",\"title\":\"Google\",\"browser_name\":\"Chrome\",\"visit_count\":5,\"visited_at\":\"2025-01-01 10:00:00\"}]}"}
+          }
+        },
+        {"name": "Get Browsing History","request": {"method": "GET","url": "{{base_url}}/devices/{{device_uuid}}/browsing/history"}},
+        {"name": "Get Blocked Sites",   "request": {"method": "GET","url": "{{base_url}}/devices/{{device_uuid}}/filter/blocked"}},
+        {
+          "name": "Block Website",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/devices/{{device_uuid}}/filter/block",
+            "body": {"mode": "raw","raw": "{\"domain\":\"tiktok.com\",\"block_type\":\"domain\",\"reason\":\"محتوى غير مناسب\"}"}
+          }
+        },
+        {"name": "Unblock Website", "request": {"method": "DELETE","url": "{{base_url}}/filter/blocked/1"}},
+        {"name": "Check URL (Device)","request": {"method": "GET","url": "{{base_url}}/devices/{{device_uuid}}/filter/check?url=https://tiktok.com"}},
+        {"name": "Get Categories",  "request": {"method": "GET","url": "{{base_url}}/devices/{{device_uuid}}/filter/categories"}}
+      ]
+    },
+    {
+      "name": "📱 App Monitoring",
+      "item": [
+        {
+          "name": "Sync Apps (Device)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/devices/{{device_uuid}}/apps/sync",
+            "body": {"mode": "raw","raw": "{\"apps\":[{\"package_name\":\"com.whatsapp\",\"app_name\":\"WhatsApp\",\"version_name\":\"2.23.1\",\"version_code\":\"231001\",\"is_system_app\":false,\"install_date\":\"2024-01-01\"}]}"}
+          }
+        },
+        {"name": "Get Installed Apps","request": {"method": "GET","url": "{{base_url}}/devices/{{device_uuid}}/apps/installed"}},
+        {
+          "name": "Sync App Usage (Device)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/devices/{{device_uuid}}/apps/usage",
+            "body": {"mode": "raw","raw": "{\"usage\":[{\"package_name\":\"com.whatsapp\",\"foreground_sec\":3600,\"launch_count\":5,\"usage_date\":\"2025-01-01\"}]}"}
+          }
+        },
+        {"name": "Block App",   "request": {"method": "POST","url": "{{base_url}}/devices/{{device_uuid}}/apps/block","body": {"mode": "raw","raw": "{\"package_name\":\"com.tiktok\",\"block_type\":\"full\",\"reason\":\"إدمان\"}"}}},
+        {"name": "Unblock App", "request": {"method": "DELETE","url": "{{base_url}}/apps/blocked/1"}}
+      ]
+    },
+    {
+      "name": "📞 Communication",
+      "item": [
+        {
+          "name": "Sync Contacts (Device)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/devices/{{device_uuid}}/contacts/sync",
+            "body": {"mode": "raw","raw": "{\"contacts\":[{\"contact_name\":\"أبو أحمد\",\"phone_number\":\"+201000000000\",\"contact_type\":\"phone\"}]}"}
+          }
+        },
+        {"name": "Get Contacts","request": {"method": "GET","url": "{{base_url}}/devices/{{device_uuid}}/contacts"}},
+        {
+          "name": "Sync Calls (Device)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/devices/{{device_uuid}}/calls/sync",
+            "body": {"mode": "raw","raw": "{\"calls\":[{\"phone_number\":\"+201000000000\",\"contact_name\":\"أبو أحمد\",\"call_type\":\"incoming\",\"duration\":120,\"called_at\":\"2025-01-01 10:00:00\"}]}"}
+          }
+        },
+        {"name": "Get Call Logs","request": {"method": "GET","url": "{{base_url}}/devices/{{device_uuid}}/calls"}},
+        {
+          "name": "Sync SMS (Device)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/devices/{{device_uuid}}/sms/sync",
+            "body": {"mode": "raw","raw": "{\"messages\":[{\"phone_number\":\"+201000000000\",\"message_body\":\"مرحبا\",\"sms_type\":\"received\",\"sent_at\":\"2025-01-01 10:00:00\"}]}"}
+          }
+        },
+        {"name": "Get SMS Logs","request": {"method": "GET","url": "{{base_url}}/devices/{{device_uuid}}/sms"}},
+        {"name": "Block Number",  "request": {"method": "POST","url": "{{base_url}}/devices/{{device_uuid}}/numbers/block","body": {"mode": "raw","raw": "{\"phone_number\":\"+201111111111\",\"reason\":\"رقم مجهول\"}"}}},
+        {"name": "Get Blocked Numbers","request": {"method": "GET","url": "{{base_url}}/devices/{{device_uuid}}/numbers/blocked"}},
+        {"name": "Unblock Number","request": {"method": "DELETE","url": "{{base_url}}/numbers/blocked/1"}}
+      ]
+    },
+    {
+      "name": "🔔 Notifications",
+      "item": [
+        {"name": "Get All",          "request": {"method": "GET",   "url": "{{base_url}}/notifications"}},
+        {"name": "Unread Only",      "request": {"method": "GET",   "url": "{{base_url}}/notifications?unread_only=1"}},
+        {"name": "Unread Count",     "request": {"method": "GET",   "url": "{{base_url}}/notifications/unread-count"}},
+        {"name": "Mark One Read",    "request": {"method": "PATCH", "url": "{{base_url}}/notifications/1/read"}},
+        {"name": "Mark All Read",    "request": {"method": "PATCH", "url": "{{base_url}}/notifications/read-all"}},
+        {"name": "Delete One",       "request": {"method": "DELETE","url": "{{base_url}}/notifications/1"}},
+        {"name": "Clear Old (30d)",  "request": {"method": "DELETE","url": "{{base_url}}/notifications/clear-old?days=30"}}
+      ]
+    },
+    {
+      "name": "🔧 Health",
+      "item": [
+        {"name": "Health Check", "request": {"method": "GET","url": "{{base_url}}/health"}}
+      ]
+    }
+  ]
+}

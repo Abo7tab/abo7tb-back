@@ -1,0 +1,1 @@
+<?php try { $pdo = new PDO('mysql:host=mysql-ab7tb.alwaysdata.net;port=3306;dbname=ab7tb_12', 'ab7tb', 'medo@1212'); echo 'Connected to ab7tb_12!'; } catch (PDOException $e) { echo 'Error: ' . $e->getMessage(); } ?>

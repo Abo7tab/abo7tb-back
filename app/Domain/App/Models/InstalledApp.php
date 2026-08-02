@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class InstalledApp extends Model
 {
     protected $table = 'installed_apps';
+    
+    public $timestamps = false;
 
     protected $fillable = [
         'device_id',

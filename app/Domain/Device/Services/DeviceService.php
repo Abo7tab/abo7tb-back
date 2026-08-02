@@ -160,22 +160,7 @@ class DeviceService
      */
     private function checkDeviceLimit(int $userId): void
     {
-        $user  = User::findOrFail($userId);
-        $count = $this->deviceRepo->countUserDevices($userId);
-
-        $limits = [
-            'free'    => config('parental-control.limits.free_plan_devices', 100),
-            'premium' => config('parental-control.limits.premium_plan_devices', 5),
-            'family'  => config('parental-control.limits.family_plan_devices', 10),
-        ];
-
-        $plan  = $user->subscription_plan ?? 'free';
-        $limit = $limits[$plan] ?? 2;
-
-        if ($count >= $limit) {
-            throw new \RuntimeException(
-                "لقد وصلت للحد الأقصى من الأجهزة ({$limit}) في خطة {$plan}. قم بالترقية للإضافة المزيد."
-            );
-        }
+        // بناءً على طلب العميل: تم إلغاء نظام حدود الأجهزة والسماح بعدد لا نهائي من الهواتف لكل مستخدم
+        return;
     }
 }

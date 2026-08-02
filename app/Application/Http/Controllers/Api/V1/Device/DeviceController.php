@@ -50,6 +50,7 @@ class DeviceController extends Controller
     public function register(RegisterDeviceRequest $request): JsonResponse
     {
         try {
+            $validated = $request->validated();
             $dto    = RegisterDeviceDTO::fromArray($validated, $request->user()->id);
             $device = $this->deviceService->registerDevice($dto);
 
@@ -91,6 +92,7 @@ class DeviceController extends Controller
         }
 
         try {
+            $validated = $request->validated();
             $dto     = SendCommandDTO::fromArray($validated, $device->id, $request->user()->id);
             $command = $this->commandService->sendCommand($dto);
 
@@ -204,6 +206,7 @@ class DeviceController extends Controller
             return $this->error('الجهاز غير موجود.', 404);
         }
 
+        $validated = $request->validated();
         $dto      = UpdateLocationDTO::fromArray($validated);
         $location = $this->locationService->updateLocation($device, $dto);
 

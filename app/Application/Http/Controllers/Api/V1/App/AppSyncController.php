@@ -46,10 +46,15 @@ class AppSyncController extends Controller
             return $this->error('الجهاز غير موجود.', 404);
         }
 
-        $dto    = SyncAppsDTO::fromArray($request->validated(), $device->id);
-        $result = $this->monitoringService->syncInstalledApps($dto);
+        try {
+            $dto    = SyncAppsDTO::fromArray($request->validated(), $device->id);
+            $result = $this->monitoringService->syncInstalledApps($dto);
 
-        return $this->success($result, "تم مزامنة {$result['synced']} تطبيق جديد و{$result['updated']} محدَّث.");
+            return $this->success($result, "تم مزامنة {$result['synced']} تطبيق جديد و{$result['updated']} محدَّث.");
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('App Sync Error: ' . $e->getMessage());
+            return $this->error('خطأ في المزامنة: ' . $e->getMessage(), 500);
+        }
     }
 
     /**

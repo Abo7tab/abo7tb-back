@@ -28,7 +28,7 @@ class AppSyncController extends Controller
      */
     public function sync(Request $request, string $uuid): JsonResponse
     {
-        $request->validate([
+        $validated = $request->validate([
             'apps'                    => 'required|array',
             'apps.*.package_name'     => 'required|string|max:255',
             'apps.*.app_name'         => 'sometimes|string|max:150',
@@ -47,7 +47,7 @@ class AppSyncController extends Controller
         }
 
         try {
-            $dto    = SyncAppsDTO::fromArray($request->validated(), $device->id);
+            $dto    = SyncAppsDTO::fromArray($validated, $device->id);
             $result = $this->monitoringService->syncInstalledApps($dto);
 
             return $this->success($result, "تم مزامنة {$result['synced']} تطبيق جديد و{$result['updated']} محدَّث.");
@@ -73,7 +73,7 @@ class AppSyncController extends Controller
      */
     public function usage(Request $request, string $uuid): JsonResponse
     {
-        $request->validate([
+        $validated = $request->validate([
             'date'                     => 'required|date|date_format:Y-m-d',
             'usage'                    => 'required|array',
             'usage.*.package_name'     => 'required|string|max:255',
@@ -96,7 +96,7 @@ class AppSyncController extends Controller
             return $this->error('الجهاز غير موجود.', 404);
         }
 
-        $dto    = RecordUsageDTO::fromArray($request->validated(), $device->id);
+        $dto    = RecordUsageDTO::fromArray($validated, $device->id);
         $result = $this->monitoringService->recordDailyUsage($dto);
 
         return $this->success($result, "تم تسجيل استخدام {$result['recorded']} تطبيق.");

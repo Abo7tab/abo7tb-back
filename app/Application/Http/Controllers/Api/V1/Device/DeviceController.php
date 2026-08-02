@@ -50,7 +50,7 @@ class DeviceController extends Controller
     public function register(RegisterDeviceRequest $request): JsonResponse
     {
         try {
-            $dto    = RegisterDeviceDTO::fromArray($request->validated(), $request->user()->id);
+            $dto    = RegisterDeviceDTO::fromArray($validated, $request->user()->id);
             $device = $this->deviceService->registerDevice($dto);
 
             return $this->success(
@@ -91,7 +91,7 @@ class DeviceController extends Controller
         }
 
         try {
-            $dto     = SendCommandDTO::fromArray($request->validated(), $device->id, $request->user()->id);
+            $dto     = SendCommandDTO::fromArray($validated, $device->id, $request->user()->id);
             $command = $this->commandService->sendCommand($dto);
 
             return $this->success([
@@ -204,7 +204,7 @@ class DeviceController extends Controller
             return $this->error('الجهاز غير موجود.', 404);
         }
 
-        $dto      = UpdateLocationDTO::fromArray($request->validated());
+        $dto      = UpdateLocationDTO::fromArray($validated);
         $location = $this->locationService->updateLocation($device, $dto);
 
         return $this->success([
@@ -248,7 +248,7 @@ class DeviceController extends Controller
      */
     public function updateFcmToken(Request $request, string $uuid): JsonResponse
     {
-        $request->validate([
+        $validated = $request->validate([
             'fcm_token'    => 'required|string|max:4096',
             'push_enabled' => 'sometimes|boolean',
         ]);
@@ -275,7 +275,7 @@ class DeviceController extends Controller
      */
     public function updateCommandStatus(Request $request, string $commandUuid): JsonResponse
     {
-        $request->validate([
+        $validated = $request->validate([
             'status' => 'required|in:completed,failed,executing',
             'result' => 'sometimes|array',
             'error'  => 'sometimes|string',

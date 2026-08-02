@@ -24,7 +24,7 @@ class BrowsingController extends Controller
      */
     public function record(Request $request, string $uuid): JsonResponse
     {
-        $request->validate([
+        $validated = $request->validate([
             'url'          => 'required|string|max:2048',
             'title'        => 'sometimes|string|max:500',
             'browser_name' => 'sometimes|string|max:100',
@@ -36,7 +36,7 @@ class BrowsingController extends Controller
             return $this->error('الجهاز غير موجود.', 404);
         }
 
-        $dto   = RecordBrowsingDTO::fromArray($request->validated(), $device->id);
+        $dto   = RecordBrowsingDTO::fromArray($validated, $device->id);
         $visit = $this->filteringService->recordVisit($dto);
 
         return $this->success([
@@ -58,7 +58,7 @@ class BrowsingController extends Controller
      */
     public function batch(Request $request, string $uuid): JsonResponse
     {
-        $request->validate([
+        $validated = $request->validate([
             'history'                => 'required|array|max:500',
             'history.*.url'          => 'required|string|max:2048',
             'history.*.title'        => 'sometimes|string|max:500',
@@ -73,7 +73,7 @@ class BrowsingController extends Controller
             return $this->error('الجهاز غير موجود.', 404);
         }
 
-        $dto    = BatchBrowsingDTO::fromArray($request->validated(), $device->id);
+        $dto    = BatchBrowsingDTO::fromArray($validated, $device->id);
         $result = $this->filteringService->recordBatch($dto);
 
         return $this->success($result, "تم تسجيل {$result['recorded']} زيارة.");
@@ -170,7 +170,7 @@ class BrowsingController extends Controller
      */
     public function check(Request $request, string $uuid): JsonResponse
     {
-        $request->validate([
+        $validated = $request->validate([
             'url' => 'required|string|max:2048',
         ]);
 

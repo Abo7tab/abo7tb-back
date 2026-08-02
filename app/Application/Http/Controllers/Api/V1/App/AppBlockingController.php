@@ -90,7 +90,7 @@ class AppBlockingController extends Controller
      */
     public function block(Request $request, string $uuid): JsonResponse
     {
-        $request->validate([
+        $validated = $request->validate([
             'package_name'  => 'required|string|max:255',
             'app_name'      => 'sometimes|string|max:150',
             'block_type'    => 'sometimes|in:permanent,scheduled,time_limited',
@@ -104,7 +104,7 @@ class AppBlockingController extends Controller
             return $this->error('الجهاز غير موجود.', 404);
         }
 
-        $dto     = BlockAppDTO::fromArray($request->validated(), $device->id);
+        $dto     = BlockAppDTO::fromArray($validated, $device->id);
         $blocked = $this->blockingService->blockApp($dto);
 
         return $this->success([

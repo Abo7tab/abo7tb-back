@@ -39,7 +39,7 @@ class TimeLimitController extends Controller
      */
     public function store(Request $request, string $uuid): JsonResponse
     {
-        $request->validate([
+        $validated = $request->validate([
             'limit_type'            => 'required|in:daily_total,app_specific,bedtime,study_time,custom',
             'limit_name'            => 'sometimes|string|max:100',
             'max_minutes_per_day'   => 'required_if:limit_type,daily_total|integer|min:1|max:1440',
@@ -62,7 +62,7 @@ class TimeLimitController extends Controller
         $limit = $this->timeLimitService->createLimit(
             deviceId:  $device->id,
             limitType: $request->limit_type,
-            data:      $request->validated()
+            data:      $validated
         );
 
         return $this->success($this->formatLimit($limit), 'تم إنشاء القيد بنجاح.', 201);
@@ -74,7 +74,7 @@ class TimeLimitController extends Controller
      */
     public function update(Request $request, int $limitId): JsonResponse
     {
-        $request->validate([
+        $validated = $request->validate([
             'limit_name'          => 'sometimes|string|max:100',
             'max_minutes_per_day' => 'sometimes|integer|min:1|max:1440',
             'max_app_minutes'     => 'sometimes|integer|min:1|max:1440',
@@ -86,7 +86,7 @@ class TimeLimitController extends Controller
             'is_active'           => 'sometimes|boolean',
         ]);
 
-        $updated = $this->timeLimitService->updateLimit($limitId, $request->validated());
+        $updated = $this->timeLimitService->updateLimit($limitId, $validated);
 
         return $this->success(
             ['updated' => $updated],

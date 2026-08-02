@@ -36,7 +36,7 @@ class CallController extends Controller
      */
     public function sync(Request $request, string $uuid): JsonResponse
     {
-        $request->validate([
+        $validated = $request->validate([
             'calls'                    => 'required|array|max:1000',
             'calls.*.phone_number'     => 'required|string|max:30',
             'calls.*.contact_name'     => 'sometimes|nullable|string|max:255',
@@ -52,7 +52,7 @@ class CallController extends Controller
             return $this->error('الجهاز غير موجود.', 404);
         }
 
-        $dto    = SyncCallLogsDTO::fromArray($request->validated(), $device->id);
+        $dto    = SyncCallLogsDTO::fromArray($validated, $device->id);
         $result = $this->callService->syncCallLogs($dto);
 
         return $this->success($result, "تم مزامنة {$result['synced']} مكالمة.");

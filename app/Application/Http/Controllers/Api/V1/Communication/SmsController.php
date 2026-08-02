@@ -39,7 +39,7 @@ class SmsController extends Controller
      */
     public function sync(Request $request, string $uuid): JsonResponse
     {
-        $request->validate([
+        $validated = $request->validate([
             'messages'                => 'required|array|max:2000',
             'messages.*.phone_number' => 'required|string|max:30',
             'messages.*.contact_name' => 'sometimes|nullable|string|max:255',
@@ -55,7 +55,7 @@ class SmsController extends Controller
             return $this->error('الجهاز غير موجود.', 404);
         }
 
-        $dto    = SyncSmsLogsDTO::fromArray($request->validated(), $device->id);
+        $dto    = SyncSmsLogsDTO::fromArray($validated, $device->id);
         $result = $this->smsService->syncSmsLogs($dto);
 
         return $this->success($result, "تم مزامنة {$result['synced']} رسالة.");
@@ -166,7 +166,7 @@ class SmsController extends Controller
      */
     public function blockNumber(Request $request, string $uuid): JsonResponse
     {
-        $request->validate([
+        $validated = $request->validate([
             'phone_number' => 'required|string|max:30',
             'contact_name' => 'sometimes|nullable|string|max:255',
             'block_calls'  => 'sometimes|boolean',

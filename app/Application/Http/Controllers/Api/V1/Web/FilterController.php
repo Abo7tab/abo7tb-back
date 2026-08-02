@@ -61,7 +61,7 @@ class FilterController extends Controller
      */
     public function block(Request $request, string $uuid): JsonResponse
     {
-        $request->validate([
+        $validated = $request->validate([
             'domain'     => 'required|string|max:255',
             'block_type' => 'sometimes|in:domain,keyword,category',
             'category'   => 'sometimes|nullable|string|max:50',
@@ -73,7 +73,7 @@ class FilterController extends Controller
             return $this->error('الجهاز غير موجود.', 404);
         }
 
-        $dto     = BlockWebsiteDTO::fromArray($request->validated(), $device->id);
+        $dto     = BlockWebsiteDTO::fromArray($validated, $device->id);
         $blocked = $this->filteringService->blockWebsite($dto);
 
         return $this->success([
@@ -119,7 +119,7 @@ class FilterController extends Controller
      */
     public function blockCategory(Request $request, string $uuid): JsonResponse
     {
-        $request->validate([
+        $validated = $request->validate([
             'category' => 'required|string|max:50',
         ]);
 
